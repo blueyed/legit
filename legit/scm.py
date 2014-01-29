@@ -138,7 +138,7 @@ def smart_merge(branch, allow_rebase=True):
     try:
         return repo.git.execute([git, verb, branch])
     except GitCommandError, why:
-        log = repo.git.execute([git,'merge', '--abort'])
+        repo.git.execute([git,'merge', '--abort'])
         abort('Merge failed. Reverting.', log=why)
 
 
@@ -258,7 +258,7 @@ def get_branches(local=True, remote_branches=True):
                 name = '/'.join(b.name.split('/')[1:])
 
                 if name not in settings.forbidden_branches:
-                    branches.append(Branch(name, True))
+                    branches.append(Branch(name, is_published=True))
         except (IndexError, AssertionError):
             pass
 
@@ -269,7 +269,7 @@ def get_branches(local=True, remote_branches=True):
 
             if b not in [br.name for br in branches] or not remote_branches:
                 if b not in settings.forbidden_branches:
-                    branches.append(Branch(b, False))
+                    branches.append(Branch(b, is_published=False))
 
 
     return sorted(branches, key=attrgetter('name'))
